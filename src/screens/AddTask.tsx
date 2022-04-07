@@ -130,6 +130,7 @@ const AddTask = (props:any) => {
             });
         });
         dispatch(addTasktoList(temp));
+        toast.show({title:"Task added successfully"});
       }
     }else{
         toast.show({title:"Please enter title",bgColor:"red.700"});
