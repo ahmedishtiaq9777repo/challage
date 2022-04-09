@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import styles from "../../Style";
 import Header from "../components/HomeHeader";
@@ -20,9 +21,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import Task from "../components/Task";
 import TasksData from "../db/dbStorage";
 import { useToast } from "native-base";
-import { TaskState,SingleTask } from "../store/reducer";
+import { TaskState, SingleTask } from "../store/reducer";
 
-const AddTask = (props:any) => {
+const AddTask = (props: any) => {
   const [title, setTitle] = useState<string>("");
   const [dateshow, setDateshow] = useState(false);
   const [date, setDateDeadline] = useState<Date>(new Date()); //deadline
@@ -32,36 +33,24 @@ const AddTask = (props:any) => {
   const [endTime, setEndTime] = useState<Date>(new Date());
   const [remind, setRemind] = useState<string>("10");
   const [repeat, setRepeat] = useState<string>("Daily");
-  const alltasks = useSelector<TaskState,TaskState['taskList']>((state) => state?.taskList);
-  console.log("alltesks:", alltasks);
+  const [activity, setindicatorvisibility] = useState(false);
+  const alltasks = useSelector<TaskState, TaskState['taskList']>((state) => state?.taskList);
+
 
   const localdb = new TasksData();
   const dispatch = useDispatch();
   const toast = useToast();
 
-  //   function open() {
-  //     pickerRef.current.focus();
-  //   }
 
-  //   function close() {
-  //     pickerRef.current.blur();
-  //   }
-
-  const onChangeDate = (event, date:Date) => {
+  const onChangeDate = (event, date: Date) => {
     setDateDeadline(date);
-    console.log("date:", date);
+
   };
-  const handleConfirmStart = (time:Date) => {
-    console.log("type:",typeof(time));
-    // console.warn("A time has been picked: ", time);
-    console.log("time:",moment(time).format("YYYY-MM-DD"));
-    
+  const handleConfirmStart = (time: Date) => {
     setStartTime(time);
     setstartmodalvisible(false);
   };
-  const handleConfirmEnd = (time:Date) => {
-    console.log("time:",moment(time).format("h:mm A"));
-    // console.warn("A time has been picked: ", time);
+  const handleConfirmEnd = (time: Date) => {
     setEndTime(time);
     setenddatemodalvisible(false);
   };
@@ -73,15 +62,16 @@ const AddTask = (props:any) => {
     }
   };
   const addTaskbtnPress = () => {
+    setindicatorvisibility(true);
     if (validate()) {
-      if (alltasks != undefined && alltasks != null && alltasks?.length>0) {
+      if (alltasks != undefined && alltasks != null && alltasks?.length > 0) {
         let TempTasks = [...alltasks];
         let lth = TempTasks.length;
 
         let id = TempTasks[lth - 1].Id;
 
 
-        let task:SingleTask = {
+        let task: SingleTask = {
           Id: id + 1,
           title: title,
           deadline: date,
@@ -93,15 +83,16 @@ const AddTask = (props:any) => {
         };
         TempTasks.push(task);
         localdb.createTaskTable().then((val) => {
-          console.log("Table created Succesfully");
+
           localdb
             .addTask(title, date, startTime, endTime, remind, repeat, 0)
             .then((res) => {
-              console.log("added:", res);
-              toast.show({title:"Task added successfully"});
+              setindicatorvisibility(false);
+              toast.show({ title: "Task added successfully" });
             })
             .catch((error) => {
-              console.log("error:", error);
+              setindicatorvisibility(false);
+              toast.show({ title: error });
             });
         });
         dispatch(addTasktoList(TempTasks));
@@ -119,21 +110,27 @@ const AddTask = (props:any) => {
         };
         temp.push(task);
         localdb.createTaskTable().then((val) => {
-          console.log("Table created Succesfully");
+
           localdb
             .addTask(title, date, startTime, endTime, remind, repeat, 0)
             .then((res) => {
-              console.log("added:", res);
+              setindicatorvisibility(false);
+              toast.show({ title: "Task added successfully" });
             })
             .catch((error) => {
-              console.log("error:", error);
+              setindicatorvisibility(false);
+              toast.show({ title: error });
             });
-        });
+        }).catch((error) => {
+          setindicatorvisibility(false);
+          toast.show({ title: error });
+        })
         dispatch(addTasktoList(temp));
-        toast.show({title:"Task added successfully"});
+
       }
-    }else{
-        toast.show({title:"Please enter title",bgColor:"red.700"});
+    } else {
+      setindicatorvisibility(false);
+      toast.show({ title: "Please enter title", bgColor: "red.700" });
     }
   };
   return (
@@ -149,7 +146,7 @@ const AddTask = (props:any) => {
           <Text style={styles.fieldtitle}>Title</Text>
           <TextInput
             placeholder="Enter title"
-            onChangeText={(text) => setTitle(text)}
+            onChangeText={setTitle}
             style={styles.field}
           />
           <Text style={styles.fieldtitle}>Deadline</Text>
@@ -192,13 +189,7 @@ const AddTask = (props:any) => {
               <Text style={{ fontWeight: "bold" }}>Start Time</Text>
               <TouchableOpacity
                 onPress={() => setstartmodalvisible((t) => !t)}
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: "rgba(211, 211, 211, 0.5)",
-                  height: 37,
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                }}
+                style={styles.time}
               >
                 <DateTimePickerModal
                   isVisible={startdatemodal}
@@ -207,12 +198,7 @@ const AddTask = (props:any) => {
                   onCancel={() => setstartmodalvisible(false)}
                 />
                 <Text>{moment(startTime).format("h:mm A")}</Text>
-                {/* <DateTimePicker
-                  value={new Date()}
-                  mode="time"
-                  display="inline"
-                  style={{paddingHorizontal:50 }}
-                /> */}
+
                 <Ionicons
                   name="time-outline"
                   style={{ marginLeft: "36%" }}
@@ -224,13 +210,7 @@ const AddTask = (props:any) => {
               <Text style={{ fontWeight: "bold" }}>End Time</Text>
               <TouchableOpacity
                 onPress={() => setenddatemodalvisible(true)}
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: "rgba(211, 211, 211, 0.5)",
-                  height: 37,
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                }}
+                style={styles.time}
               >
                 <DateTimePickerModal
                   isVisible={enddatemodal}
@@ -239,12 +219,7 @@ const AddTask = (props:any) => {
                   onCancel={() => setenddatemodalvisible(false)}
                 />
                 <Text>{moment(endTime).format("h:mm A")}</Text>
-                {/* <DateTimePicker
-                value={new Date()}
-                mode="time"
-                display="inline"
-                style={{ paddingHorizontal: 50 }}
-              /> */}
+
                 <Ionicons
                   name="time-outline"
                   style={{ marginLeft: "36%" }}
@@ -257,7 +232,7 @@ const AddTask = (props:any) => {
           <RNPickerSelect
             value={remind}
             style={pickerSelectStyles}
-            onValueChange={(value) => setRemind(value)}
+            onValueChange={setRemind}
             items={[
               { label: "10 Minutes early", value: "10" },
               { label: "20 Minutes early", value: "20" },
@@ -268,13 +243,15 @@ const AddTask = (props:any) => {
           <RNPickerSelect
             value={repeat}
             style={pickerSelectStyles}
-            onValueChange={(value) => setRepeat(value)}
+            onValueChange={setRepeat}
             items={[
               { label: "Daily", value: "Daily" },
               { label: "Weekly", value: "Weekly" },
               { label: "Monthly", value: "Monthly" },
             ]}
           />
+
+          {activity && <ActivityIndicator size={"large"} style={styles.margintoploader} />}
           <Button
             title="Create a Task"
             bottomstyle={{ marginTop: "30%" }}

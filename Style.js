@@ -97,12 +97,23 @@ export default StyleSheet.create({
   marginTopn: {
     marginTop: 15,
   },
+  margintoploader:{
+    marginTop: 20,
+  },
   marginBottomn: {
     marginBottom: 5,
   },
   marginBottompending:{
     marginBottom:"10%",
   },
+  time:{
+    flexDirection: "row",
+    backgroundColor: "rgba(211, 211, 211, 0.5)",
+    height: 37,
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+ 
   field: {
     marginHorizontal: "10%",
     backgroundColor: "rgba(211, 211, 211, 0.5)",

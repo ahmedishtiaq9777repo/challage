@@ -7,52 +7,28 @@ import { useSelector, useDispatch } from "react-redux";
 import { addTasktoList } from "../store/action";
 import Task from "../components/Task";
 import TasksData from "../db/dbStorage";
-import { TaskState,SingleTask } from "../store/reducer";
+import { TaskState, SingleTask } from "../store/reducer";
+import { useToast } from "native-base";
+import NavigationService from "../services/services";
+import FilterTask from "../components/FilterTask";
 const Home = (props) => {
-  const allTasks = useSelector<TaskState,TaskState['taskList']>((state) => state?.taskList);
+  const allTasks = useSelector<TaskState, TaskState['taskList']>((state) => state?.taskList);
   const allTasksRef = useRef(allTasks);
   allTasksRef.current = allTasks;
- 
+
   const dispatch = useDispatch();
   const localdb = new TasksData();
+  const toast = useToast();
   useEffect(() => {
-    const unsubscribe = props.navigation.addListener("focus", () => {
-      // // console.log("navcount",countref.current);
-
-      try {
-          localdb.createTaskTable().then((res)=>{
-
-
-            localdb
-            .getalltasks()
-            .then((records) => {
-              console.log("records:", records);
-              dispatch(addTasktoList(records));
-            })
-            .catch((error) => {
-              console.log("error:", error);
-            });
+    NavigationService(props.navigation, dispatch, localdb, toast);
+  }, []);
 
 
 
-          }).catch((error)=>{
-console.log("error:",error);
-          });
-       
-      } catch (error) {
-        console.log("error:", error);
-      }
 
-    });
-    return unsubscribe;
-  }, [props.navigation]);
 
-  const onPressCheckboxComplete = (item) => {
-    // console.log("item:Complete:", item);
-  };
-  const onPressCheckboxPending = (item:SingleTask) => {
-    console.log("item:pending:", item);
-    console.log("alltasks:", allTasksRef.current);
+  const onPressCheckboxPending = (item: SingleTask) => {
+
     let temptasks = [...allTasksRef.current];
 
     for (const obj of temptasks) {
@@ -62,19 +38,16 @@ console.log("error:",error);
         break;
       }
     }
-    localdb
-      .updatetask(item.Id, 1)
-      .then((res) => {
-        console.log("updated:", res);
-        if(res.rowsAffected)
-        {
-            console.log("updated");
-        }
-      })
-      .catch((error) => {
-        console.log("error update:", error);
-      });
-    dispatch(addTasktoList(temptasks));
+    try {
+      localdb
+        .updatetask(item.Id, 1)
+
+
+      dispatch(addTasktoList(temptasks));
+    } catch (error) {
+      toast.show({ title: error });
+    }
+
   };
 
   const onPressAddTask = () => {
@@ -84,53 +57,33 @@ console.log("error:",error);
   return (
     <View style={styles.container}>
       <View style={styles.mainScreen}>
-        
+
         <Header title="To-Do App" rightView={true} />
         <ScrollView>
-        <Text style={[styles.marginHorizontal, styles.taskheading]}>
-          Completed Tasks
-        </Text>
-        {allTasksRef.current != undefined
-          ? allTasksRef.current
-              .filter((a) => a.status == 1)
-              .map((item) => {
-                return (
-                  <Task
-                    key={item.Id}
-                    item={item}
-                    onPressCheckbox={onPressCheckboxComplete}
-                  />
-                );
-              })
-          : null}
-        <Text style={[styles.marginHorizontal, styles.taskheading]}>
-          Pending Tasks
-        </Text>
-        <View style={styles.marginBottompending}>
-        {allTasksRef.current != undefined
-          ? allTasksRef.current
-              .filter((a) => a.status == 0)
-              .map((item) => {
-                return (
-                  <Task
-                    key={item.Id}
-                    item={item}
-                    onPressCheckbox={onPressCheckboxPending}
-                  />
-                );
-              })
-          : null}
+          <Text style={[styles.marginHorizontal, styles.taskheading]}>
+            Completed Tasks
+          </Text>
+          {allTasksRef.current != undefined
+            ? <FilterTask alltasks={allTasksRef.current} status={1} />
+            : null}
+          <Text style={[styles.marginHorizontal, styles.taskheading]}>
+            Pending Tasks
+          </Text>
+          <View style={styles.marginBottompending}>
+            {allTasksRef.current != undefined
+              ? <FilterTask alltasks={allTasksRef.current} status={0} onPressCheckboxPending={onPressCheckboxPending} />
+              : null}
           </View>
-  </ScrollView>
+        </ScrollView>
         <View style={styles.buttonView}>
           <Button
             onPress={onPressAddTask}
             title="Add the task"
             bottomstyle={styles.bottomstyle}
           />
-          
+
         </View>
-      
+
       </View>
     </View>
   );

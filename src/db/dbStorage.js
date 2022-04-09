@@ -12,13 +12,6 @@ class TasksData {
       this.db.transaction((trx) =>
         trx.executeSql(query, [], res, (_, error) => reject(error))
       );
-      //   this.db.executeSql(query)
-      //     .then((val) => {
-      //       res(val);
-      //     })
-      //     .catch((error) => {
-      //       rej(error);
-      //     });
     });
   };
   addTask = (title, deadline, starttime, endTime, remind, repeat, status) => {
@@ -68,11 +61,18 @@ class TasksData {
       );
     });
   };
-  deleteallrecord=()=>{
-      return new Promise((res,rej)=>{
-          query="delete  from   Tasks";
-          this.db.transaction(trx=>trx.executeSql(query,[],(_,result)=>res(result),(_,error)=>rej(error)));
-      });
-  }
+  deleteallrecord = () => {
+    return new Promise((res, rej) => {
+      query = "delete  from   Tasks";
+      this.db.transaction((trx) =>
+        trx.executeSql(
+          query,
+          [],
+          (_, result) => res(result),
+          (_, error) => rej(error)
+        )
+      );
+    });
+  };
 }
 export default TasksData;
