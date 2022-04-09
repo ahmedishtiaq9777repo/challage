@@ -5,7 +5,6 @@ import Header from "../components/HomeHeader";
 import styles from "../../Style";
 import { useSelector, useDispatch } from "react-redux";
 import { addTasktoList } from "../store/action";
-import Task from "../components/Task";
 import TasksData from "../db/dbStorage";
 import { TaskState, SingleTask } from "../store/reducer";
 import { useToast } from "native-base";
