@@ -1,20 +1,18 @@
 import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import styles from "../../Style";
-const Task = (props) => {
+const Task = ({ item, onPressCheckbox = null }) => {
   return (
     <View style={styles.taskview}>
       <TouchableOpacity
         style={
-          props.item?.status
+          item?.status
             ? [styles.checkbox, styles.backgroundColorT]
             : [styles.checkbox]
         }
-        onPress={() => {
-          props?.onPressCheckbox(props.item);
-        }}
+        onPress={() => (onPressCheckbox ? onPressCheckbox(item) : null)}
       ></TouchableOpacity>
-      <Text style={styles.tasktitle}>{props.item?.title}</Text>
+      <Text style={styles.tasktitle}>{item?.title}</Text>
     </View>
   );
 };

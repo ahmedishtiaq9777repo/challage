@@ -86,7 +86,6 @@ export default StyleSheet.create({
   buttonView: {
     flex: 1,
     justifyContent: "flex-end",
-    marginTop:80
   },
   taskform: {
     flex: 1,
@@ -97,23 +96,29 @@ export default StyleSheet.create({
   marginTopn: {
     marginTop: 15,
   },
-  margintoploader:{
+  margintoploader: {
     marginTop: 20,
   },
   marginBottomn: {
     marginBottom: 5,
   },
-  marginBottompending:{
-    marginBottom:"10%",
+  marginBottomPerC: {
+    marginBottom: "5%",
   },
-  time:{
+  heightcompleteView: {
+    maxHeight: "20%",
+  },
+  heightpendingView: {
+    maxHeight: "25%",
+  },
+  time: {
     flexDirection: "row",
     backgroundColor: "rgba(211, 211, 211, 0.5)",
     height: 37,
     alignItems: "center",
     paddingHorizontal: 10,
   },
- 
+
   field: {
     marginHorizontal: "10%",
     backgroundColor: "rgba(211, 211, 211, 0.5)",
@@ -150,8 +155,8 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: "rgba(0, 0, 0, 0.7)",
 
-    marginTop:30,
-    marginBottom:30,
+    marginTop: 30,
+    marginBottom: 30,
   },
   taskview: {
     //  width:Dimensions.get("screen").width,
@@ -183,7 +188,6 @@ export default StyleSheet.create({
     width: "90%",
     height: 46,
     textAlignVertical: "center",
-    marginTop:"0.4%",
-   
+    marginTop: "0.4%",
   },
 });

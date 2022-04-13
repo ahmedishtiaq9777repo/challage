@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Pressable, ScrollView, SafeAreaView } from "react-native";
 import Button from "../components/Button";
 import Header from "../components/HomeHeader";
 import styles from "../../Style";
@@ -19,7 +19,9 @@ const Home = (props) => {
   const localdb = new TasksData();
   const toast = useToast();
   useEffect(() => {
+
     NavigationService(props.navigation, dispatch, localdb, toast);
+
   }, []);
 
 
@@ -49,31 +51,32 @@ const Home = (props) => {
 
   };
 
-  const onPressAddTask = () => {
-    props.navigation.navigate("AddTaskScreen");
-  };
+  const onPressAddTask = () => props.navigation.navigate("AddTaskScreen");
+
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.mainScreen}>
 
         <Header title="To-Do App" rightView={true} />
-        <ScrollView>
-          <Text style={[styles.marginHorizontal, styles.taskheading]}>
-            Completed Tasks
-          </Text>
+
+        <Text style={[styles.marginHorizontal, styles.taskheading]}>
+          Completed Tasks
+        </Text>
+        <View style={styles.heightcompleteView}>
           {allTasksRef.current != undefined
             ? <FilterTask alltasks={allTasksRef.current} status={1} />
             : null}
-          <Text style={[styles.marginHorizontal, styles.taskheading]}>
-            Pending Tasks
-          </Text>
-          <View style={styles.marginBottompending}>
-            {allTasksRef.current != undefined
-              ? <FilterTask alltasks={allTasksRef.current} status={0} onPressCheckboxPending={onPressCheckboxPending} />
-              : null}
-          </View>
-        </ScrollView>
+        </View>
+        <Text style={[styles.marginHorizontal, styles.taskheading]}>
+          Pending Tasks
+        </Text>
+        <View style={styles.heightpendingView}>
+          {allTasksRef.current != undefined
+            ? <FilterTask alltasks={allTasksRef.current} status={0} onPressCheckboxPending={onPressCheckboxPending} />
+            : null}
+        </View>
+
         <View style={styles.buttonView}>
           <Button
             onPress={onPressAddTask}
@@ -84,7 +87,7 @@ const Home = (props) => {
         </View>
 
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 export default Home;

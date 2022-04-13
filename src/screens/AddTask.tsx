@@ -23,14 +23,14 @@ import TasksData from "../db/dbStorage";
 import { useToast } from "native-base";
 import { TaskState, SingleTask } from "../store/reducer";
 
-const AddTask = (props: any) => {
-  const [title, setTitle] = useState<string>("");
+const AddTask = ({ navigation }) => {
+  const [title, setTitle] = useState<string>();
   const [dateshow, setDateshow] = useState(false);
-  const [date, setDateDeadline] = useState<Date>(new Date()); //deadline
+  const [date, setDateDeadline] = useState<Date>(); //deadline
   const [startdatemodal, setstartmodalvisible] = useState(false);
   const [enddatemodal, setenddatemodalvisible] = useState(false);
-  const [startTime, setStartTime] = useState<Date>(new Date());
-  const [endTime, setEndTime] = useState<Date>(new Date());
+  const [startTime, setStartTime] = useState<Date>();
+  const [endTime, setEndTime] = useState<Date>();
   const [remind, setRemind] = useState<string>("10");
   const [repeat, setRepeat] = useState<string>("Daily");
   const [activity, setindicatorvisibility] = useState(false);
@@ -42,10 +42,9 @@ const AddTask = (props: any) => {
   const toast = useToast();
 
 
-  const onChangeDate = (event, date: Date) => {
-    setDateDeadline(date);
+  const onChangeDate = (event, date: Date) => setDateDeadline(date);
 
-  };
+
   const handleConfirmStart = (time: Date) => {
     setStartTime(time);
     setstartmodalvisible(false);
@@ -138,7 +137,7 @@ const AddTask = (props: any) => {
       <View style={styles.mainScreen}>
         <Header
           title="Add task"
-          onbackPress={() => props.navigation.goBack()}
+          onbackPress={() => navigation.goBack()}
           leftArrowIcon={true}
         />
 
@@ -173,9 +172,7 @@ const AddTask = (props: any) => {
                 onChange={onChangeDate}
                 style={{ marginHorizontal: "10%" }}
               />
-              {/* <TouchableOpacity style={styles.dateConfirmbtn}>
-                <Text style={styles.dateConfirmbtnText}>Confirm</Text>
-              </TouchableOpacity> */}
+
             </View>
           )}
           <View
@@ -257,13 +254,14 @@ const AddTask = (props: any) => {
             bottomstyle={{ marginTop: "30%" }}
             onPress={addTaskbtnPress}
           />
+
         </View>
       </View>
     </View>
   );
 };
 const pickerSelectStyles = StyleSheet.create({
-  inputIOS: { ...styles.field, ...{ color: "black" } },
+  inputIOS: { ...styles.field, color: "black" },
   inputAndroid: styles.field,
 });
 export default AddTask;

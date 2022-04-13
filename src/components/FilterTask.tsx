@@ -1,34 +1,46 @@
 import React from 'react';
+import { FlatList } from 'react-native';
+import styles from '../../Style';
 import Task from './Task';
 
+
+
 const FilterTask = (props) => {
+    const { alltasks, status } = props;
+    const onPressCheckboxPending = props?.onPressCheckboxPending;
+    const filteredtasks = alltasks.filter(a => a.status == status);
 
-    if (props.status) {
-        return (props.alltasks
-            .filter((a) => a.status == 1)
-            .map((item) => {
-                return (
-                    <Task
-                        key={item.Id}
-                        item={item}
 
-                    />
-                );
-            }));
+    const renderTaskPending = ({ item, index }) => {
+        return (
+            <Task
+                item={item}
+                onPressCheckbox={onPressCheckboxPending}
+
+            />
+        );
+    };
+    const renderTaskCompleted = ({ item, index }) => {
+        return (
+            <Task
+           
+                item={item}
+
+
+            />
+        );
+    };
+    if (status) {
+        return (
+            <FlatList data={filteredtasks} renderItem={renderTaskCompleted} keyExtractor={(item,index)=>item.Id} />
+        );
+
     } else {
         return (
-            props.alltasks
-                .filter((a) => a.status == 0)
-                .map((item) => {
-                    return (
-                        <Task
-                            key={item.Id}
-                            item={item}
-                            onPressCheckbox={props.onPressCheckboxPending}
-                        />
-                    );
-                })
+            <FlatList data={filteredtasks} style={styles.marginBottomPerC} renderItem={renderTaskPending} keyExtractor={(item,index)=>item.Id} />
         );
     }
+
+
 };
 export default FilterTask;
